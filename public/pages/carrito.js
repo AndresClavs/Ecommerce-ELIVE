@@ -20,7 +20,11 @@
             <div class="flex items-start justify-between gap-3">
               <div>
                 <h3 class="font-medium"><a href="${url}" class="underline-offset-4 hover:underline">${escapa(p.nombre)}</a></h3>
-                <p class="mt-1 text-sm">Talla: <span class="font-semibold">${escapa(it.talla)}</span></p>
+                <label class="mt-2 block text-sm" for="talla-${i}">Talla</label>
+                <select id="talla-${i}" data-origen="${it.varianteId}" class="border border-black bg-white px-3 py-2">
+                  ${(p.variantes || [{id:it.varianteId,talla:it.talla}]).map(v=>`<option value="${v.id}" ${v.id===it.varianteId?'selected':''} ${v.stock<it.cant?'disabled':''}>${escapa(v.talla)}</option>`).join('')}
+                </select>
+                <a href="cambiar.html?linea=${it.varianteId}" class="mt-2 block text-sm underline">Cambiar prenda</a>
               </div>
               <button type="button" id="del-${i}" data-del="${i}" aria-label="Eliminar ${escapa(p.nombre)}, talla ${escapa(it.talla)}, de la bolsa" class="-mr-2 -mt-2 p-2">${BASURA}</button>
             </div>
@@ -66,6 +70,11 @@
       if (d) Cart.remove(+d.dataset.del).catch(e=>Aviso(e.message));
     });
     lista.addEventListener('change', e => {
+      const talla=e.target.closest('[data-origen]');
+      if(talla){
+        talla.disabled=true;
+        api('/cart/'+talla.dataset.origen+'/variante/'+talla.value,'PUT',{}).then(data=>{accept(data);Aviso('Talla actualizada.');}).catch(error=>{render();Aviso(error.message);});
+      }
       const s = e.target.closest('[data-cant]');
       if (s) Cart.setCant(+s.dataset.cant, +s.value).catch(e=>{Aviso(e.message);render();});
     });

@@ -12,7 +12,11 @@
         ['email', 'Correo electrónico', 'email', 'email', 'Ejemplo: nombre@correo.com', '', 254, 1]]],
       ['2. Dirección de entrega', [
         ['direccion', 'Dirección (calle, número, ciudad)', 'text', 'street-address', 'Incluye calle, número y ciudad. Máximo 120 caracteres.', '', 120, 1],
-        ['telefono', 'Celular', 'tel', 'tel-national', 'Escribe 9 dígitos, empezando por 9. No incluyas el 0 inicial. Ejemplo: 991234567.', 'numeric', 9, 1]]]
+        ['telefono', 'Celular', 'tel', 'tel-national', 'Escribe 9 dígitos, empezando por 9. No incluyas el 0 inicial. Ejemplo: 991234567.', 'numeric', 9, 1]]],
+      ['3. Pago simulado', [
+        ['tarjeta', 'Número de tarjeta', 'text', 'off', 'Usa solo datos ficticios. Tarjeta Visa de prueba: 4242 4242 4242 4242', 'numeric', 19, 1],
+        ['fecha', 'Fecha de expiración (MM/AA)', 'text', 'off', 'Ejemplo: 08/28. La fecha debe estar vigente y no superar 10 años.', 'numeric', 5],
+        ['cvv', 'Código CVV', 'password', 'off', '3 dígitos (4 en American Express)', 'numeric', 4]]]
     ];
     $('#secciones').innerHTML = SECC.map(([t, cs], si) => `
       <fieldset class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -33,6 +37,8 @@
     SECC.forEach(([, cs]) => cs.forEach(c => campos[c[0]] = $('#' + c[0])));
     campos.telefono.setAttribute('aria-label','Celular de Ecuador, código +593');
 
+    campos.tarjeta.classList.replace('pr-11', 'pr-28');
+    campos.tarjeta.insertAdjacentHTML('afterend', '<span id="marca" class="hidden" aria-live="polite"></span>');
     /* ----- Resumen calculado por el modelo del servidor ----- */
     function pintarPedido() {
       const items = Cart.list(), vacia = !items.length;
@@ -64,10 +70,31 @@
     }
 
     /* ----- Formato mientras escribe ----- */
+    campos.tarjeta.addEventListener('input', () => {
+      let d = campos.tarjeta.value.replace(/\D/g, '');
+      const mc = marca(d), amex = mc === 'Amex';
+      d = d.slice(0, amex ? 15 : 16);
+      campos.tarjeta.value = amex ? [d.slice(0, 4), d.slice(4, 10), d.slice(10)].filter(Boolean).join(' ') : d.replace(/(.{4})/g, '$1 ').trim();
+      if (campos.cvv.value) validar('cvv');
+      const b = $('#marca');
+      b.className = 'pointer-events-none absolute right-10 top-1/2 -translate-y-1/2 rounded border border-black/30 bg-white px-2 py-0.5 text-xs font-bold ' + (mc ? (mc === 'Visa' ? 'text-blue-800' : mc === 'Amex' ? 'text-sky-700' : 'text-orange-700') : 'hidden');
+      b.innerHTML = mc ? mc.toUpperCase() + '<span class="sr-only"> tarjeta detectada</span>' : '';
+    });
+    campos.fecha.addEventListener('input', () => {
+      let d = campos.fecha.value.replace(/\D/g, '').slice(0, 4);
+      if (d.length >= 3) d = d.slice(0, 2) + '/' + d.slice(2);
+      campos.fecha.value = d;
+    });
+    campos.cvv.addEventListener('input', () => { campos.cvv.value = campos.cvv.value.replace(/\D/g, '').slice(0, 4); });
     ['nombre', 'apellido'].forEach(n => campos[n].addEventListener('input', () => { campos[n].value = campos[n].value.replace(/[^\p{L}\s'’-]/gu, ''); }));
     campos.telefono.addEventListener('input',()=>{campos.telefono.value=campos.telefono.value.replace(/\D/g,'').slice(0,9);});
 
     /* ----- Reglas: devuelven el mensaje de error o '' ----- */
+    // Marca de la tarjeta según sus primeros dígitos
+    const marca = d => /^4/.test(d) ? 'Visa' : /^(5[1-5]|2(2[2-9]|[3-6]\d|7[01]|720))/.test(d) ? 'Mastercard' : /^3[47]/.test(d) ? 'Amex' : /^(6011|65)/.test(d) ? 'Discover' : '';
+    // Algoritmo de Luhn: comprueba que el número de tarjeta sea coherente
+    const luhn = d => { let s = 0, alt = false; for (let i = d.length - 1; i >= 0; i--) { let n = +d[i]; if (alt) { n *= 2; if (n > 9) n -= 9; } s += n; alt = !alt; } return s % 10 === 0; };
+    const cvvLen = () => marca(campos.tarjeta.value.replace(/\D/g, '')) === 'Amex' ? 4 : 3;
     const letras = (v, q) => !v.trim() ? `Escribe ${q}`
       : v.trim().length < 2 ? `Escribe al menos 2 caracteres para ${q}`
       : !/^[\p{L}][\p{L}\s'’-]*$/u.test(v.trim()) ? 'Usa solo letras, espacios, apóstrofes o guiones' : '';
@@ -84,7 +111,26 @@
         if (/\d{7,}/.test(direccion) || (direccion.match(/\d/g) || []).length > 12) return 'Revisa el número de calle y la dirección ingresada';
         return '';
       },
-      telefono: v => Reglas.phoneError(v)
+      telefono: v => Reglas.phoneError(v),
+      tarjeta: v => {
+        const d = v.replace(/\D/g, ''), n = marca(d) === 'Amex' ? 15 : 16;
+        return !d ? 'Escribe el número de tu tarjeta'
+          : !marca(d) ? 'Usa una tarjeta Visa, Mastercard, American Express o Discover'
+          : d.length < n ? 'El número de tarjeta está incompleto'
+          : !luhn(d) ? 'El número de tarjeta no es válido. Revísalo' : '';
+      },
+      fecha: v => {
+        if (!v.trim()) return 'Escribe la fecha de expiración';
+        const m = v.match(/^(\d{2})\/(\d{2})$/);
+        if (!m || +m[1] < 1 || +m[1] > 12) return 'Usa el formato MM/AA, por ejemplo 08/28';
+        const hoy = new Date();
+        const expiracion = (2000 + +m[2]) * 12 + +m[1];
+        const mesActual = hoy.getFullYear() * 12 + hoy.getMonth() + 1;
+        if (expiracion < mesActual) return 'La tarjeta está vencida. Usa otra tarjeta';
+        if (expiracion > mesActual + 120) return 'La fecha de vencimiento no puede superar 10 años desde hoy';
+        return '';
+      },
+      cvv: v => !v.trim() ? 'Escribe el código CVV' : v.length !== cvvLen() ? `El CVV debe tener ${cvvLen()} dígitos` : ''
     };
 
     function mostrarError(n, msg) {
@@ -146,7 +192,7 @@
       try {
         let claveIdempotencia=sessionStorage.getItem('elive_intento');
         if(!claveIdempotencia){claveIdempotencia=crypto.randomUUID();sessionStorage.setItem('elive_intento',claveIdempotencia);}
-        const payload={claveIdempotencia};
+        const payload={claveIdempotencia,pagoSimulado:'tarjeta'};
         for(const key of ['nombre','apellido','email','direccion','telefono'])payload[key]=campos[key].value.trim();
         payload.telefono='+593'+payload.telefono;
         const pedido=await api('/orders','POST',payload);

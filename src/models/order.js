@@ -19,6 +19,9 @@ async function create(session,data){
    await rows(c,'INSERT INTO pedido_items(pedido_id,variante_id,nombre_producto,sku,talla,cantidad,precio_unitario) VALUES(?,?,?,?,?,?,?)',[r.insertId,i.id,i.nombre,i.sku,i.talla,i.cantidad,i.precio]);
   }
   await rows(c,"INSERT INTO historial_pedido(pedido_id,estado_codigo,nota) VALUES(?,'recibido','Pedido recibido; pago pendiente')",[r.insertId]);
+  if(data.pagoSimulado){
+   await rows(c,"INSERT INTO pagos(pedido_id,proveedor,referencia,estado,es_simulado,importe) VALUES(?,'demo',?,'aprobado',1,?)",[r.insertId,number,(subtotal+envio)/100]);
+  }
   await rows(c,'DELETE FROM carrito_items WHERE carrito_id=?',[cartId]);return number;
  });
 }

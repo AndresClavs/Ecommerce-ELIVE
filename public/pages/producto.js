@@ -119,7 +119,7 @@
       if (modal.classList.contains('hidden')) return;
       if (e.key === 'Escape') { cerrarModal(); return; }
       if (e.key === 'Tab') {
-        const f = $('button, a[href]', modal).filter(x=>x.getClientRects().length&&!x.disabled), a = f[0], z = f[f.length - 1];
+        const f = $$('button, a[href]', modal).filter(x=>x.getClientRects().length&&!x.disabled), a = f[0], z = f[f.length - 1];
         if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
         else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
       }
