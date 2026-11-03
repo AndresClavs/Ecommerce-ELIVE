@@ -5,6 +5,13 @@
     const p = prod(new URLSearchParams(location.search).get('id'));
     if(!p){document.querySelector('main').innerHTML='<h1 class="text-3xl">Producto no encontrado</h1><a class="underline" href="index.html#catalogo">Volver al catálogo</a>';return;}
     if(p.g==='ninos') document.querySelector('details').innerHTML='<summary class="cursor-pointer text-sm font-medium">Guía de tallas infantiles</summary><p class="mt-3">Tallas disponibles: 4, 6, 8 y 10. Consulta las medidas de la prenda antes de comprar.</p>';
+    const linea=new URLSearchParams(location.search).get('linea');
+    const original=Cart.list().find(item=>item.varianteId===Number(linea));
+    if(linea){
+      if(!original){location.replace('carrito.html');return;}
+      $('#btn-anadir').textContent='Confirmar cambio en mi bolsa';
+      $('#p-nombre').insertAdjacentHTML('beforebegin',`<a class="underline" href="cambiar.html?linea=${original.varianteId}">‹ Ver otras prendas</a><p class="my-4 border-l-2 border-black pl-3">Reemplazarás ${escapa(original.nombre)}, talla ${escapa(original.talla)}. Cantidad: ${original.cant}. <a href="carrito.html" class="underline">Cancelar cambio</a></p>`);
+    }
     const TALLAS=p.variantes.map(v=>v.talla);
     const GEN = { mujeres: 'Mujeres', hombres: 'Hombres', ninos: 'Niños' };
     const N = 1;
@@ -54,7 +61,7 @@
     verImagen(1);
 
     // Tallas: la elegida muestra un check y se anuncia en texto
-    $('#tallas').innerHTML = TALLAS.map(t => `<button type="button" data-talla="${t}" ${p.variantes.find(v=>v.talla===t).stock===0 ? 'disabled' : ''} aria-pressed="false" aria-label="Talla ${t}" class="border border-black bg-white py-3 text-center transition-colors hover:bg-black/5">${t}</button>`).join('');
+    $('#tallas').innerHTML = TALLAS.map(t => `<button type="button" data-talla="${t}" ${p.variantes.find(v=>v.talla===t).stock<(original?.cant||1) ? 'disabled' : ''} aria-pressed="false" aria-label="Talla ${t}" class="border border-black bg-white py-3 text-center transition-colors hover:bg-black/5">${t}</button>`).join('');
     $('#tallas').addEventListener('click', e => {
       const b = e.target.closest('[data-talla]');
       if (!b) return;
@@ -81,7 +88,13 @@
         return;
       }
       const btn=$('#btn-anadir');btn.disabled=true;
-      try{await Cart.add(p.id,talla);abrirModal();}catch(e){$('#error-talla').textContent=e.message;}finally{btn.disabled=false;}
+      try{
+        if(original){
+          const destino=p.variantes.find(v=>v.talla===talla);
+          await api('/cart/'+original.varianteId+'/variante/'+destino.id,'PUT',{});
+          location.href='carrito.html';
+        }else{await Cart.add(p.id,talla);abrirModal();}
+      }catch(e){$('#error-talla').textContent=e.message;}finally{btn.disabled=false;}
     });
 
     // Modal

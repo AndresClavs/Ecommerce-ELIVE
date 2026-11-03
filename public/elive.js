@@ -90,8 +90,8 @@ function precioHtml(p) {
   return (p.antes ? `<span class="mr-2 font-normal text-black/60 line-through"><span class="sr-only">Antes: </span>${money(p.antes)}</span>` : '') + money(p.precio);
 }
 
-function card(p) {
-  const url = `producto.html?id=${p.id}`;
+function card(p, {linea} = {}) {
+  const url = `producto.html?id=${p.id}${linea ? "&amp;linea="+linea : ""}`;
   return `
   <li class="bg-white ${SOMBRA}">
     <article class="group">
@@ -99,7 +99,7 @@ function card(p) {
         <a href="${url}" tabindex="-1" aria-hidden="true"><img src="${escapa(foto(p.id, 1, 600, 750))}" alt="" loading="lazy" width="600" height="750" class="aspect-[4/5] w-full object-cover"></a>
         <button type="button" data-fav="${p.id}" aria-pressed="${Fav.has(p.id)}" aria-label="Guardar ${escapa(p.nombre)} en favoritos"
                 class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-black transition-colors hover:bg-white">${heartSvg('h-[18px] w-[18px]', Fav.has(p.id))}</button>
-        <a href="${url}" class="absolute inset-x-0 bottom-0 bg-black py-3 text-center text-sm tracking-wide text-white transition-opacity lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100">Elegir talla y añadir</a>
+        <a href="${url}" class="absolute inset-x-0 bottom-0 bg-black py-3 text-center text-sm tracking-wide text-white transition-opacity lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100">${linea ? 'Elegir para el cambio' : 'Elegir talla y añadir'}</a>
       </div>
       <div class="p-4">
         <h3 class="text-sm"><a href="${url}" class="underline-offset-4 hover:underline">${escapa(p.nombre)}</a></h3>
@@ -255,7 +255,7 @@ function mountHeader(modo) {
     ${d('Envíos y entregas', `El envío cuesta ${money(ENVIO)} y es gratis si te registras. Entregamos en 3 a 5 días hábiles.`)}
     ${d('Cambios y devoluciones', 'Puedes devolver tu pedido hasta 30 días después de recibirlo, con las etiquetas puestas.')}
     ${d('Contacto', 'Escríbenos a <a href="mailto:soporteelive@gmail.com" class="underline underline-offset-4">soporteelive@gmail.com</a>. Respondemos de lunes a viernes, de 9:00 a 18:00.')}
-    <p class="mt-6 text-center text-xs">Las imágenes de las prendas se mostrarán cuando estén disponibles.</p>
+
     <p class="mt-2 text-center text-sm">&copy; 2026 ELIVE. Ropa para toda la familia.</p>
   </div>`;
 })();

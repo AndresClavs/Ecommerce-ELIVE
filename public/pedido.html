@@ -17,7 +17,13 @@
 
   <main id="contenido" class="mx-auto max-w-3xl px-4 py-8 lg:py-12">
 
+    <section id="historial" class="hidden">
+      <h1 class="text-3xl font-semibold">Mis pedidos</h1>
+      <p class="mt-2">Elige una compra para ver sus prendas y seguir la entrega.</p>
+      <ul id="compras" class="mt-6 space-y-4"></ul>
+    </section>
     <section id="ok" class="hidden" aria-labelledby="h1">
+      <a href="pedido.html" class="mb-4 inline-block underline">‹ Volver a mis pedidos</a>
       <h1 id="h1" tabindex="-1" class="text-3xl font-semibold uppercase tracking-tight lg:text-4xl">Estado de tu pedido</h1>
       <p class="mt-3">Pedido <strong id="num"></strong></p>
       <p id="actual" role="status" class="mt-2 flex items-center gap-2 font-medium"></p>
