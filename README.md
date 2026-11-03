@@ -21,6 +21,16 @@ Abrir **http://localhost:3000**. No abrir los HTML con doble clic: necesitan la 
 
 La conexión local está en `.env`, excluido de Git. En otro equipo, copiar `.env.example` a `.env` y completar los datos de conexión. Nunca introducir credenciales de la base en el JavaScript público. La dirección usada en el navegador debe coincidir con `APP_ORIGIN`; por defecto es `http://localhost:3000`.
 
+## Publicar una demo en Railway
+
+1. Crea un proyecto en Railway desde el repositorio `AndresClavs/Ecommerce-ELIVE` y agrega un servicio MySQL. Usa un plan que mantenga disponibles la app y la base mientras tu profesora la prueba.
+2. En las variables del servicio de la app, configura `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` con referencias a las variables MySQL que muestra Railway (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`). No escribas las credenciales en el repositorio.
+3. En MySQL, ejecuta `database/01_esquema.sql` y después `database/02_catalogo_inicial.sql`, una sola vez y en ese orden. Sigue las instrucciones de [database/README.md](database/README.md). La base debe ser accesible desde la app de Railway.
+4. Genera un dominio público para la app. Configura `APP_ORIGIN` con ese dominio completo (por ejemplo, `https://tu-app.up.railway.app`), `COOKIE_SECURE=true` y `PAYMENT_MODE=demo`.
+5. Railway ejecuta `npm start`. Abre el dominio generado y comprueba que `/api/health` responda `{"database":"connected"}`.
+
+El catálogo y las compras necesitan la base MySQL activa. Esta demo no procesa pagos reales; no uses datos de tarjeta reales. Para revisar el estado de conexión, visita `https://TU-DOMINIO/api/health`.
+
 ## Arquitectura MVC
 
 ```text
