@@ -21,15 +21,17 @@ Abrir **http://localhost:3000**. No abrir los HTML con doble clic: necesitan la 
 
 La conexión local está en `.env`, excluido de Git. En otro equipo, copiar `.env.example` a `.env` y completar los datos de conexión. Nunca introducir credenciales de la base en el JavaScript público. La dirección usada en el navegador debe coincidir con `APP_ORIGIN`; por defecto es `http://localhost:3000`.
 
-## Publicar una demo en Railway
+## Publicar una demo gratuita en Render y TiDB Cloud
 
-1. Crea un proyecto en Railway desde el repositorio `AndresClavs/Ecommerce-ELIVE` y agrega un servicio MySQL. Usa un plan que mantenga disponibles la app y la base mientras tu profesora la prueba.
-2. En las variables del servicio de la app, configura `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` con referencias a las variables MySQL que muestra Railway (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`). No escribas las credenciales en el repositorio.
-3. En MySQL, ejecuta `database/01_esquema.sql` y después `database/02_catalogo_inicial.sql`, una sola vez y en ese orden. Sigue las instrucciones de [database/README.md](database/README.md). La base debe ser accesible desde la app de Railway.
-4. Genera un dominio público para la app. Configura `APP_ORIGIN` con ese dominio completo (por ejemplo, `https://tu-app.up.railway.app`), `COOKIE_SECURE=true` y `PAYMENT_MODE=demo`.
-5. Railway ejecuta `npm start`. Abre el dominio generado y comprueba que `/api/health` responda `{"database":"connected"}`.
+Esta combinación tiene límites de uso: Render suspende el servicio web tras 15 minutos sin tráfico y puede tardar alrededor de un minuto en reactivarlo. TiDB Cloud Starter incluye una cuota gratuita mensual con límites de almacenamiento y consultas; al agotarla, las conexiones se limitan hasta el siguiente mes. Revisa las [condiciones de Render Free](https://render.com/docs/free) y la [cuota actual de TiDB Cloud](https://www.pingcap.com/pricing/). No uses esta configuración para producción.
 
-El catálogo y las compras necesitan la base MySQL activa. Esta demo no procesa pagos reales; no uses datos de tarjeta reales. Para revisar el estado de conexión, visita `https://TU-DOMINIO/api/health`.
+1. Crea una cuenta en [TiDB Cloud](https://tidbcloud.com/) y un clúster **Starter**. En **Connect**, selecciona conexión pública y guarda los datos de host, puerto, usuario y contraseña en un lugar seguro. TiDB requiere TLS.
+2. Desde el botón **Connect** de TiDB, utiliza sus datos de conexión en un cliente MySQL, como HeidiSQL. Conéctate a la instancia y ejecuta `database/01_esquema.sql` y luego `database/02_catalogo_inicial.sql`, una sola vez y en ese orden. Comprueba los resultados descritos en [database/README.md](database/README.md).
+3. Crea una cuenta en [Render](https://render.com/) y elige **New > Web Service**. Conecta el repositorio `AndresClavs/Ecommerce-ELIVE` y la rama `main`; selecciona Node y el plan **Free**. El comando de inicio es `npm start`.
+4. En **Environment** del servicio, agrega `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` con los datos de TiDB, además de `DB_SSL=true`, `COOKIE_SECURE=true` y `PAYMENT_MODE=demo`. Después de generar el dominio `onrender.com`, configura también `APP_ORIGIN` con la URL completa, por ejemplo `https://tu-app.onrender.com`.
+5. Espera a que termine el despliegue y abre `https://tu-app.onrender.com/api/health`. Debe responder `{"database":"connected"}`. Luego comparte el dominio base con tu profesora.
+
+No escribas las credenciales de TiDB en Git ni las compartas por el chat. La tienda funciona con pagos de demostración: no ingreses datos de tarjetas reales. El servicio gratuito puede tardar en despertar después de estar inactivo.
 
 ## Arquitectura MVC
 
