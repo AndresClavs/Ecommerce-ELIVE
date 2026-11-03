@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Producto | ELIVE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#F9F9F6] text-black font-sans antialiased">
+
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:border focus:border-black focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+
+  <header id="site-header"></header>
+
+  <main id="contenido" class="mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-10">
+
+    <nav aria-label="Migas de pan" class="mb-6 text-sm">
+      <ol id="migas" class="flex flex-wrap items-center gap-2"></ol>
+    </nav>
+
+    <article class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-16">
+
+      <!-- Galería -->
+      <div>
+        <div class="bg-white">
+          <img id="img-principal" src="" alt="" width="600" height="800" class="aspect-[3/4] w-full object-cover" fetchpriority="high">
+        </div>
+        <ul id="miniaturas" class="mt-3 grid grid-cols-4 gap-3"></ul>
+      </div>
+
+      <!-- Información -->
+      <div class="md:py-4">
+        <h1 id="p-nombre" class="text-3xl font-semibold tracking-tight lg:text-4xl"></h1>
+        <p id="p-precio" class="mt-3 text-2xl"></p>
+        <p id="p-desc" class="mt-4 max-w-md text-black/80"></p>
+
+        <button type="button" id="p-fav" data-fav aria-pressed="false"
+                class="mt-5 inline-flex items-center gap-2 border border-black bg-white px-4 py-2 text-sm transition-colors hover:bg-black/5"></button>
+
+        <div class="mt-8">
+          <p id="tallas-label" class="mb-3 font-medium">Talla</p>
+          <div role="group" aria-labelledby="tallas-label" id="tallas" class="grid max-w-sm grid-cols-4 gap-3"></div>
+          <p id="talla-sel" class="mt-3 text-sm" aria-live="polite">Elige una talla para añadir la prenda.</p>
+
+          <details class="mt-4 max-w-sm border-y border-black/10 py-3">
+            <summary class="cursor-pointer text-sm font-medium">Guía de tallas</summary>
+            <div class="mt-3 overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <caption class="sr-only">Medidas en centímetros por talla</caption>
+                <thead><tr><th scope="col" class="py-1 pr-4">Talla</th><th scope="col" class="py-1 pr-4">Pecho (cm)</th><th scope="col" class="py-1">Cintura (cm)</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row" class="py-1 pr-4 font-medium">S</th><td class="pr-4">88–92</td><td>70–74</td></tr>
+                  <tr><th scope="row" class="py-1 pr-4 font-medium">M</th><td class="pr-4">94–98</td><td>76–80</td></tr>
+                  <tr><th scope="row" class="py-1 pr-4 font-medium">L</th><td class="pr-4">100–104</td><td>82–86</td></tr>
+                  <tr><th scope="row" class="py-1 pr-4 font-medium">XL</th><td class="pr-4">106–110</td><td>88–92</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        <div class="mt-8 max-w-sm">
+          <button type="button" id="btn-anadir" aria-describedby="error-talla"
+                  class="w-full bg-black py-4 text-base font-medium tracking-wide text-white transition-colors hover:bg-black/85">Añadir a la bolsa</button>
+          <p id="error-talla" role="alert" class="mt-3 flex min-h-[1.5rem] items-center gap-2 text-sm font-medium text-red-600"></p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer></footer>
+
+  <!-- MODAL DE ÉXITO -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4" aria-hidden="true">
+    <div role="dialog" aria-modal="true" aria-labelledby="modal-titulo" class="relative w-full max-w-md bg-white p-6 sm:p-8">
+      <button type="button" id="modal-cerrar" aria-label="Cerrar ventana" class="absolute right-3 top-3 p-2">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <div class="flex items-center gap-3 pr-8">
+        <svg class="h-8 w-8 flex-none" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#15803D"/><path d="m7 12.5 3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2 id="modal-titulo" class="text-lg font-semibold">¡Añadido a la bolsa!</h2>
+      </div>
+
+      <div class="mt-6 flex items-center gap-4 border-y border-black/10 py-4">
+        <img id="modal-img" src="" alt="" width="75" height="100" class="h-24 w-[72px] object-cover">
+        <div>
+          <p id="modal-nombre" class="font-medium"></p>
+          <p class="mt-1 text-sm">Talla: <span id="modal-talla" class="font-semibold"></span></p>
+          <p id="modal-total" class="mt-1 text-sm"></p>
+          <p id="modal-precio" class="mt-1 font-semibold"></p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-3">
+        <a href="carrito.html" class="block bg-black px-4 py-4 text-center font-medium text-white transition-colors hover:bg-black/85">Ver bolsa</a>
+        <button type="button" id="modal-registro" class="block border border-black bg-white px-4 py-3 text-center font-medium text-black transition-colors hover:bg-black hover:text-white">Regístrate gratis para envío sin costo</button>
+        <button type="button" id="modal-seguir" class="block px-4 py-2 text-center text-sm underline underline-offset-4">Seguir comprando</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="reglas.js"></script>
+  <script src="api.js"></script>
+  <script src="elive.js"></script><script src="login.js"></script>
+  <script src="pages/producto.js"></script>
+</body>
+</html>

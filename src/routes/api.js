@@ -1,0 +1,10 @@
+const express=require('express');const {rateLimit}=require('express-rate-limit');const C=require('../controllers/api');
+const router=express.Router();const wrap=fn=>(req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);
+router.use(C.identity);
+router.get('/bootstrap',wrap(C.bootstrap));router.get('/state',wrap(C.state));
+const authLimit=rateLimit({windowMs:15*60*1000,limit:30,standardHeaders:'draft-7',legacyHeaders:false,message:{error:{message:'Demasiados intentos. Espera unos minutos.'}}});
+router.post('/auth/register',authLimit,wrap(C.register));router.post('/auth/login',authLimit,wrap(C.login));router.post('/auth/logout',wrap(C.logout));
+router.post('/cart/:id',wrap(C.cart));router.patch('/cart/:id',wrap(C.cart));router.delete('/cart/:id',wrap(C.cart));
+router.put('/favorites/:id',wrap(C.favorite));router.delete('/favorites/:id',wrap(C.favorite));
+router.post('/orders',wrap(C.order));router.get('/orders',wrap(C.orders));router.get('/orders/:numero',wrap(C.detail));
+module.exports=router;

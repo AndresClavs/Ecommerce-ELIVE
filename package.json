@@ -1,0 +1,8 @@
+{
+  "name": "elive-ecommerce-mvc", "version": "1.0.0", "private": true,
+  "description": "ELIVE: vistas HTML, controladores Express y modelos MariaDB/MySQL",
+  "scripts": {"start":"node --env-file=.env server.js", "dev":"node --env-file=.env --watch server.js", "test":"node --test test/*.test.js", "test:integration":"node --env-file=.env --test test/integration.cjs", "build:css":"tailwindcss -i public/input.css -o public/styles.css --minify"},
+  "engines":{"node":">=22"},
+  "dependencies":{"express":"^4.21.2","mysql2":"^3.12.0","express-rate-limit":"^7.5.0"},
+  "devDependencies":{"tailwindcss":"^3.4.17"}
+}

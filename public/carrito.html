@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tu bolsa | ELIVE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#F9F9F6] text-black font-sans antialiased">
+
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:border focus:border-black focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+
+  <header class="border-b border-black/10 bg-[#F9F9F6]">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+      <a href="index.html" class="text-2xl font-medium uppercase tracking-[0.35em] [font-family:Jost,'Helvetica_Neue',Arial,sans-serif]" aria-label="Elive, ir al inicio">ELIVE</a>
+      <p class="flex items-center gap-2 text-sm tracking-wide">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <span>Compra en ELIVE</span>
+      </p>
+    </div>
+  </header>
+
+  <main id="contenido" class="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
+
+    <nav aria-label="Progreso de la compra" class="mb-6">
+      <ol class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        <li aria-current="step" class="font-semibold underline underline-offset-4">1. Bolsa <span class="sr-only">(paso actual)</span></li>
+        <li aria-hidden="true">›</li>
+        <li>2. Datos de entrega</li>
+        <li aria-hidden="true">›</li>
+        <li>3. Confirmación</li>
+      </ol>
+    </nav>
+
+    <div class="mb-8 flex flex-wrap items-baseline gap-x-3">
+      <h1 id="h1" tabindex="-1" class="text-3xl font-semibold uppercase tracking-tight lg:text-4xl">Tu bolsa</h1>
+      <p id="contador" class="text-base" aria-live="polite"></p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
+
+      <section class="lg:col-span-2" aria-labelledby="articulos-titulo">
+        <h2 id="articulos-titulo" class="sr-only">Artículos en tu bolsa</h2>
+        <ul id="lista" class="space-y-4"></ul>
+        <p id="seguir" class="mt-6"><a href="index.html#catalogo" class="text-sm underline underline-offset-4">‹ Seguir comprando</a></p>
+
+        <div id="vacio" class="hidden bg-white p-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.06)]" role="status">
+          <h2 class="text-xl font-semibold">Tu bolsa está vacía</h2>
+          <p class="mt-2">Cuando añadas prendas, aparecerán aquí.</p>
+          <a href="index.html#catalogo" class="mt-6 inline-block border border-black bg-white px-8 py-3 text-sm tracking-wide transition-colors hover:bg-black hover:text-white">Ver catálogo</a>
+        </div>
+      </section>
+
+      <aside aria-labelledby="resumen-titulo" class="h-fit bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <h2 id="resumen-titulo" class="text-lg font-semibold uppercase tracking-wide">Resumen del pedido</h2>
+
+        <dl class="mt-6 space-y-3 text-sm">
+          <div class="flex justify-between"><dt>Subtotal</dt><dd id="subtotal"></dd></div>
+          <div class="flex justify-between"><dt>Envío</dt><dd id="envio"></dd></div>
+          <div class="flex justify-between border-t border-black/10 pt-4 text-base font-bold"><dt>Total</dt><dd id="total"></dd></div>
+        </dl>
+
+        <p id="aviso-registro" class="mt-4 hidden text-sm">
+          <span class="block border border-black p-3">El envío cuesta $4.99. Con tu cuenta gratis no pagas envío. <button type="button" id="btn-registro" data-registro class="font-semibold underline underline-offset-4">Crear cuenta</button></span>
+        </p>
+        <p id="envio-ok" class="mt-4 hidden items-center gap-2 text-sm font-medium">
+          <svg class="h-5 w-5 flex-none" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#15803D"/><path d="m7 12.5 3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="text-green-700">Envío gratis activado</span>
+        </p>
+
+        <a href="checkout.html" id="btn-pago" class="mt-6 block w-full bg-black px-4 py-4 text-center font-medium tracking-wide text-white transition-colors hover:bg-black/85">Ir al pago</a>
+        <p id="ayuda-pago" class="mt-3 hidden text-sm">Añade al menos una prenda para continuar.</p>
+        <p class="mt-4 flex items-center gap-2 text-xs">
+          <svg class="h-4 w-4 flex-none" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
+          <span>Tus datos se usan solo para procesar tu pedido.</span>
+        </p>
+      </aside>
+    </div>
+  </main>
+
+  <footer></footer>
+
+  <script src="reglas.js"></script>
+  <script src="api.js"></script>
+  <script src="elive.js"></script><script src="login.js"></script>
+  <script src="pages/carrito.js"></script>
+</body>
+</html>
